@@ -13,7 +13,7 @@ resource "aws_db_instance" "default" {
 
 resource "aws_db_subnet_group" "database" {
   name       = "my-test-database-subnet-group"
-  subnet_ids = [aws_subnet.main.id, aws_subnet.subnet-2.id]
+  subnet_ids = [aws_subnet.subnet-1.id, aws_subnet.subnet-2.id]
 
   tags = {
     Name = "my-test-database-subnet-group"

@@ -7,13 +7,13 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "main" {
+resource "aws_subnet" "subnet-1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "eu-west-2a"
 
   tags = {
-    Name = "Main"
+    Name = "Subnet 1"
   }
 }
 
@@ -38,7 +38,10 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.main.id
 
-  route = []
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
 
   tags = {
     Name = "Rt"
@@ -46,7 +49,12 @@ resource "aws_route_table" "rt" {
 }
 
 resource "aws_route_table_association" "a" {
-  subnet_id      = aws_subnet.main.id
+  subnet_id      = aws_subnet.subnet-1.id
+  route_table_id = aws_route_table.rt.id
+}
+
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.subnet-2.id
   route_table_id = aws_route_table.rt.id
 }
 
@@ -56,11 +64,33 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description      = "TLS from VPC"
+    description      = ""
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = [aws_vpc.main.cidr_block]
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_security_group" "vp_sg" {
+  name        = "vp_sg"
+  description = "Allow HTTP inbound traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description      = ""
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   egress {

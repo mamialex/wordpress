@@ -1,14 +1,17 @@
 provider "aws" {
     region = "eu-west-2"
-    access_key = ""
-    secret_key = ""
 }
 
 terraform {
   required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "2.22.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
     }
+  }
+  backend "s3" {
+    bucket = "tf-state-alexandra-wordpress"
+    key    = "terraform.tfstate"
+    region = "eu-west-2"
   }
 }
