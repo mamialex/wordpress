@@ -1,29 +1,17 @@
 
-# Wordpress AWS Ecs Fargate
+# Wordpress AWS ECS Fargate
 
-This is ready for deploy Aws ecs fargate container.
-## Dependencies
+Container-based architecture deployable through Terraform.
 
-    1. AWS account.
-
-    2. aws cli installed.
-
-    3. Terraform installed.
+AWS Codepipeline not included in Terraform.
+![alt text](https://cdn.discordapp.com/attachments/363068637608804363/1033872633395150849/Wordpress.png)
 ## Installation
 
-Install my-project by running this commands:
+Deploy the project by following these steps:
 
 ```
-- creating the project folder:
-    mkdir ${name-of-your-project}
-    cd ${name-of-your-project}
-
 - clone the github repository:
-    git init
     git clone https://github.com/mamialex/wordpress.git
-
-- set up your AWS CLI (provide your user Access key and Secret access key):
-    aws config
 ```
     
 ## Deployment
@@ -36,11 +24,18 @@ To deploy this project run:
     terraform apply
 
 - Push commands for ecr-repo:
-    aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 809006919682.dkr.ecr.eu-west-2.amazonaws.com
+    aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
     docker build -t ecr-repo .
-    docker tag ecr-repo:latest 809006919682.dkr.ecr.eu-west-2.amazonaws.com/ecr-repo:latest
-    docker push 809006919682.dkr.ecr.eu-west-2.amazonaws.com/ecr-repo:latest
+    docker tag ecr-repo:latest ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/ecr-repo:latest
+    docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/ecr-repo:latest
 ```
+
+
+## Pipeline
+
+Not included in Terraform (but present in my own account) is a pipeline that will pull, build and deploy the Docker container running Wordpress.
+
+
 
 
 ## Usage
