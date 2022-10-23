@@ -34,6 +34,13 @@ resource "aws_iam_role_policy" "wp-service-role_policy" {
         Effect   = "Allow"
         Resource = [aws_ecr_repository.ecr-repo.arn]
       },
+      {
+        Action = [
+          "ecr:GetAuthorizationToken",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
     ]
   })
 }

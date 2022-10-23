@@ -20,6 +20,7 @@ resource "aws_ecs_task_definition" "wp" {
   family = "service"
   network_mode  = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+  task_role_arn = aws_iam_role.wp-service-role.arn
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
@@ -38,6 +39,24 @@ resource "aws_ecs_task_definition" "wp" {
           hostPort      = 80
         }
       ]
+      environment = [
+        {
+          name = "WORDPRESS_DB_HOST"
+          value = aws_db_instance.default.address
+        },
+        {
+          name = "WORDPRESS_DB_USER"
+          value = "wp"
+        },
+        {
+          name = "WORDPRESS_DB_PASSWORD"
+          value = local.db_pass
+        },
+        {
+          name = "WORDPRESS_DB_NAME"
+          value = "wordpress"
+        }
+      ]
     },
    ])
 }
@@ -51,7 +70,7 @@ resource "aws_ecs_service" "wp" {
   launch_type = "FARGATE"
 
   network_configuration {
-    subnets = [aws_subnet.subnet-1.id, aws_subnet.subnet-2.id]
+    subnets = [aws_subnet.private-subnet-1.id, aws_subnet.private-subnet-2.id]
     security_groups = [aws_security_group.vp_sg.id]
   }
 
