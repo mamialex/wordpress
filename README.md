@@ -4,7 +4,9 @@
 Container-based architecture deployable through Terraform.
 
 AWS Codepipeline not included in Terraform.
-![alt text](https://cdn.discordapp.com/attachments/363068637608804363/1033872633395150849/Wordpress.png)
+![alt text](https://cdn.discordapp.com/attachments/363068637608804363/1033873807691239604/Wordpress_2.jpg)
+
+[Click here for an extremely weird and detailed diagram generated with Terraform graph](https://github.com/mamialex/wordpress/blob/main/graph/graph.svg)
 ## Installation
 
 Deploy the project by following these steps:
